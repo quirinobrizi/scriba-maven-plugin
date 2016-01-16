@@ -65,7 +65,7 @@ public class HttpWriter implements Writer {
             this.logger.debug(format("token: %s", accessToken));
             this.logger.info(format("authentication performed, sending %s to the server", data));
             HttpResponse<JsonNode> putDocumentResponse = Unirest.put(targetUrl.toExternalForm())
-                            .header("Authorization", format("Bearer %s", accessToken)).body(data)
+                            .header("Authorization", format("ApiKey %s", accessToken)).body(data)
                             .asJson();
             this.logger.info(putDocumentResponse.getBody().toString());
         } catch (UnirestException e) {
