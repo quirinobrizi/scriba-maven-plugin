@@ -54,6 +54,7 @@ public class ScribaMojo extends AbstractMojo {
     @Parameter private Credential credential;
     @Parameter private List<Environment> environments;
     @Parameter private URL authenticateUrl;
+    @Parameter private String apiKey;
 
     /**
      * @parameter default-value="${project}"
@@ -73,7 +74,7 @@ public class ScribaMojo extends AbstractMojo {
         }
     }
 
-    private void report(String data) throws MojoFailureException {
+    private void report(String data) throws MojoExecutionException {
         if (targetUrlHasBeenProvided() && targetUrlIsNotFile()) {
             sendResultDocumentViaHttp(data);
         } else {
@@ -81,19 +82,19 @@ public class ScribaMojo extends AbstractMojo {
         }
     }
 
-    private void writeResultDocumentToFileSystem(String data) throws MojoFailureException {
+    private void writeResultDocumentToFileSystem(String data) throws MojoExecutionException {
         Writer writer = null;
         try {
             writer = WriterFactory.newPlatformWriter(getOutputFile());
             writer.write(data);
         } catch (IOException e) {
-            throw new MojoFailureException("can't write results", e);
+            throw new MojoExecutionException("can't write results", e);
         } finally {
             closeSilently(writer);
         }
     }
 
-    private void sendResultDocumentViaHttp(String data) throws MojoFailureException {
+    private void sendResultDocumentViaHttp(String data) throws MojoExecutionException {
         codesketch.scriba.maven.writer.Writer writer = new HttpWriter(getLog(), credential,
                         targetUrl, authenticateUrl);
         writer.write(data);

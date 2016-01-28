@@ -23,65 +23,109 @@ import static java.lang.String.format;
 
 import java.net.URL;
 
-import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import codesketch.scriba.maven.model.Credential;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-import codesketch.scriba.maven.model.Credential;
-
 /**
  * @author quirino.brizi
  */
 public class HttpWriter implements Writer {
 
-    private Log logger;
-    private Credential credential;
-    private URL targetUrl;
-    private URL authenticateUrl;
+	private Log logger;
+	private Credential credential;
+	private URL targetUrl;
+	private URL authenticateUrl;
+	private String apiKey;
+	private boolean useApiKey = true;
 
-    public HttpWriter(Log logger, Credential credential, URL targetUrl, URL authenticateUrl) {
-        this.logger = logger;
-        this.credential = credential;
-        this.targetUrl = targetUrl;
-        this.authenticateUrl = authenticateUrl;
-    }
+	public HttpWriter(Log logger, String apiKey, URL targetUrl) {
+		this(logger, null, targetUrl, null, apiKey, true);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see codesketch.scriba.maven.writer.Writer#write(java.lang.String)
-     */
-    @Override
-    public void write(String data) throws MojoFailureException {
+	public HttpWriter(Log logger, Credential credential, URL targetUrl,
+			URL authenticateUrl) {
+		this(logger, credential, targetUrl, authenticateUrl, null, false);
+	}
 
-        try {
-            HttpResponse<JsonNode> response = Unirest.post(this.authenticateUrl.toExternalForm())
-                            .body(this.credential.toJson()).asJson();
-            String accessToken = (String) response.getBody().getObject().get("accessToken");
-            this.logger.debug(format("token: %s", accessToken));
-            this.logger.info(format("authentication performed, sending %s to the server", data));
-            HttpResponse<JsonNode> putDocumentResponse = Unirest.put(targetUrl.toExternalForm())
-                            .header("Authorization", format("ApiKey %s", accessToken)).body(data)
-                            .asJson();
-            this.logger.info(putDocumentResponse.getBody().toString());
-        } catch (UnirestException e) {
-            throw new MojoFailureException(
-                            format("can't send results to remote host [%s]", targetUrl), e);
-        } finally {
-            this.shutdownSilently();
-        }
-    }
+	public HttpWriter(Log logger, Credential credential, URL targetUrl,
+			URL authenticateUrl, String apiKey, boolean useApiKey) {
+		this.logger = logger;
+		this.credential = credential;
+		this.targetUrl = targetUrl;
+		this.authenticateUrl = authenticateUrl;
+		this.apiKey = apiKey;
+		this.useApiKey = useApiKey;
+	}
 
-    private void shutdownSilently() {
-        // NOOP
-        // try {
-        // Unirest.shutdown();
-        // } catch (IOException e) {
-        // this.logger.warn("unable shutdown unirest!");
-        // }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see codesketch.scriba.maven.writer.Writer#write(java.lang.String)
+	 */
+	@Override
+	public void write(String data) throws MojoExecutionException {
+		try {
+			String accessToken = null;
+			if (useApiKey) {
+				accessToken = this.apiKey;
+			} else {
+				accessToken = getAccessToken();
+			}
+			this.logger.debug(format("token: %s", accessToken));
+			this.logger
+					.info(format(
+							"authentication performed, sending %s to the server",
+							data));
+			HttpResponse<JsonNode> putDocumentResponse = Unirest
+					.put(targetUrl.toExternalForm())
+					.header("Authorization", format("ApiKey %s", accessToken))
+					.body(data).asJson();
+			this.logger.info(putDocumentResponse.getBody().toString());
+		} catch (UnirestException e) {
+			throw new MojoExecutionException(format(
+					"can't send results to remote host [%s]", targetUrl), e);
+		} finally {
+			this.shutdownSilently();
+		}
+	}
+
+	private String getAccessToken() throws UnirestException {
+		HttpResponse<JsonNode> response = Unirest
+				.post(this.authenticateUrl.toExternalForm())
+				.body(this.credential.toJson()).asJson();
+		return findAndExtractAccessToken(response);
+	}
+
+	private String findAndExtractAccessToken(HttpResponse<JsonNode> response) {
+		String answer = null;
+		if (null != response && null != response.getBody()) {
+			JsonNode body = response.getBody();
+			if (body.isArray()) {
+				logger.info("there are multiple accounts responses get the first one");
+				JSONArray array = body.getArray();
+				JSONObject object = array.getJSONObject(0);
+				answer = findAccessToken(object);
+			} else {
+				answer = findAccessToken(body.getObject());
+			}
+		}
+		return answer;
+	}
+
+	private String findAccessToken(JSONObject object) {
+		return object.getString("accessToken");
+	}
+
+	private void shutdownSilently() {
+		// NOOP
+	}
 }

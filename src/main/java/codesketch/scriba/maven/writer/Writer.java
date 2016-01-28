@@ -19,12 +19,12 @@
  */
 package codesketch.scriba.maven.writer;
 
-import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * @author quirino.brizi
  */
 public interface Writer {
 
-    void write(String data) throws MojoFailureException;
+    void write(String data) throws MojoExecutionException;
 }
