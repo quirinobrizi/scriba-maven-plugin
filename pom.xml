@@ -32,18 +32,19 @@
         <repository>
             <id>central</id>
             <name>artifactory.codesketch.co.uk-plugin-releases</name>
-            <url>https://artifactory.codesketch.co.uk/artifactory/plugins-release-local</url>
+            <url>https://artifactory.codesketch.co.uk/artifactory/plugins-release</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>artifactory.codesketch.co.uk-plugin-snapshots</name>
-            <url>https://artifactory.codesketch.co.uk/artifactory/plugins-snapshot-local</url>
+            <url>https://artifactory.codesketch.co.uk/artifactory/plugins-snapshot</url>
         </snapshotRepository>
     </distributionManagement>
 
     <scm>
-        <connection>https://github.com/quirinobrizi/scriba-maven-plugin.git</connection>
-        <developerConnection>https://github.com/quirinobrizi/scriba-maven-plugin.git</developerConnection>
+    	<url>https://github.com/quirinobrizi/scriba-maven-plugin</url>
+        <connection>scm:git:https://github.com/quirinobrizi/scriba-maven-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/quirinobrizi/scriba-maven-plugin.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
