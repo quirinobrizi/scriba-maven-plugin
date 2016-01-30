@@ -24,7 +24,7 @@
 
 	<groupId>codesketch.scriba</groupId>
 	<artifactId>scriba-maven-plugin</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.6-SNAPSHOT</version>
 
 	<packaging>maven-plugin</packaging>
 
@@ -42,9 +42,9 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:https://github.com/quirinobrizi/scriba.git</connection>
-        <url>https://bitbucket.org/codesketch/whiteboard</url>
-        <developerConnection>scm:git:https://github.com/quirinobrizi/scriba.git</developerConnection>
+        <connection>https://github.com/quirinobrizi/scriba-maven-plugin.git</connection>
+        <url>https://github.com/quirinobrizi/scriba-maven-plugin</url>
+        <developerConnection>https://github.com/quirinobrizi/scriba-maven-plugin.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -96,7 +96,7 @@
 		<dependency>
 			<groupId>codesketch.scriba</groupId>
 			<artifactId>scriba-analyser</artifactId>
-			<version>0.0.5-SNAPSHOT</version>
+			<version>0.0.5</version>
 		</dependency>
 	</dependencies>
 
