@@ -32,12 +32,12 @@
         <repository>
             <id>central</id>
             <name>artifactory.codesketch.co.uk-plugin-releases</name>
-            <url>https://artifactory.codesketch.co.uk/artifactory/plugins-release</url>
+            <url>https://artifactory.codesketch.co.uk/artifactory/plugins-release-local</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>artifactory.codesketch.co.uk-plugin-snapshots</name>
-            <url>https://artifactory.codesketch.co.uk/artifactory/plugins-snapshot</url>
+            <url>https://artifactory.codesketch.co.uk/artifactory/plugins-snapshot-local</url>
         </snapshotRepository>
     </distributionManagement>
 
