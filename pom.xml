@@ -43,7 +43,6 @@
 
     <scm>
         <connection>https://github.com/quirinobrizi/scriba-maven-plugin.git</connection>
-        <url>https://github.com/quirinobrizi/scriba-maven-plugin</url>
         <developerConnection>https://github.com/quirinobrizi/scriba-maven-plugin.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
